@@ -1,7 +1,8 @@
 # flups.io: tools for reading and writing files
 
-import numpy as np
+import re
 import logging
+import numpy as np
 from .calib import load_latest, calibration
 logger = logging.getLogger(__name__)
 
@@ -47,8 +48,7 @@ def load_asc_series(fnames, calib=None, step=None):
     assert np.allclose([t.size for t in trace], trace[0].size) # check they all have the same length
     trace = np.array(trace)
     # compute time axis
-    step = step or float(fnames[0].split("_")[1][1:])  # TODO: change to a regex _s(\d+)_
-    #float(re.search("_s(\d+)_", fnames[0]).group(1))  # ???
+    step = step or float(re.search("_s(\d+)_", fnames[0]).group(1))
     n_pix = trace.shape[1]
     delays = np.arange(0, trace.shape[0])*step
     # compute wavelength axis

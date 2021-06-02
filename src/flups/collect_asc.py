@@ -5,6 +5,10 @@ import re
 import numpy as np
 from .io import load_asc_series, save_txt
 
+def frame_idx(fname):
+    """Get frame index from filename: `name0001.asc` returns 1"""
+    return int(fname[-8:-4])
+
 if __name__!= "__main__":
     import warnings
     warnings.warn("This file should be run as a script. Exiting...")
@@ -21,13 +25,14 @@ parser = ArgumentParser(description="Collects a series of `asc` into a single `.
 # add possibility to specify timestep
 parser.add_argument("-s", "--step", help="Time step")
 # add possibility to specify wavelength calibrations
-# add switch to save to npz archive
+# add way to save to npz archive
+#  add debug level
 parser.add_argument("-o", "--output", help="Output root name")
 parser.add_argument("input", help="Input pattern (`glob`).")
 
 args = parser.parse_args()
 
-fnames = glob(args.input)
+fnames = sorted(glob(args.input), key=frame_idx)
 
 args.output = args.output or fnames[0][:-8]+".txt"
 
