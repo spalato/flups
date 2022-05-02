@@ -37,7 +37,7 @@ fnames = sorted(glob(args.input), key=frame_idx)
 args.output = args.output or fnames[0][:-8]+".txt"
 
 logging.info("Loading files...")
-data = load_asc_series(fnames, args.step)
+data = load_asc_series(fnames, step=float(args.step))
 
 logging.info(f"Saving to: {args.output}")
 save_txt(args.output, *data)
