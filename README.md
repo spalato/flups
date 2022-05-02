@@ -24,3 +24,9 @@ If no error message is printed, the installation is successful.
 Currently, the module contains the following components:
 - `io.py`: tools to read and write data files.
 - `calib.py`: tools to handle wavelength calibrations.
+
+## Scripts
+- `collect_asc.py`: Collect a series of `.asc` files into a single text archive.
+
+  To execute on a complete directory, using PS: 
+  > `ls -Directory | %{$_.Name} | %{python -m flups.collect_asc -o "<root>_$_.txt" "$_/*sig*.asc"}`
