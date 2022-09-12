@@ -2,7 +2,7 @@
 # tools for maintaining calibrations 
 
 import os.path as pth
-from datetime import date as datetype
+from datetime import date as datetype, datetime
 from dataclasses import dataclass
 import numpy as np
 import yaml
@@ -49,10 +49,13 @@ class calibration:
             Indicate if the supplied parameters use 0-based indexing. If 
             `zero_indexed` is False, the 
         """
-        try:
-            date = datetype.fromisoformat(name[:10])
-        except ValueError:
-            logger.warn(f"Calibration name does not start by valid date: {name}")
+        if isinstance(name, datetype):
+            name = name.strftime("%Y-%m-%d")
+        else:
+            try:
+                date = datetype.fromisoformat(name[:10])
+            except ValueError:
+                logger.warn(f"Calibration name does not start by valid date: {name}")
         if not zero_indexed: # convert from 1-indexing to 0-indexing
             b0 = b0 + b1
         return cls(name, b0, b1)
