@@ -130,3 +130,11 @@ dmypy.json
 
 # VSCode stuff
 .vscode/
+
+# Pycharm stuff
+.idea/
+
+# FLUPS stuff
+scratch/debug_asc/run01/
+scratch/debug_asc/run11/
+

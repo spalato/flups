@@ -1,0 +1,27 @@
+ INFO | root: Loading files...
+ValueError: could not convert string to float: 'Date and Time:                Wed Jan 2 04:49:26.000 2002'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "c:\work\src\flups\src\flups\collect_asc.py", line 44, in <module>
+    data = load_asc_series(fnames, step=float(args.step))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\work\src\flups\src\flups\io.py", line 46, in load_asc_series
+    trace = [read_asc(fn)[:,1] for fn in fnames]
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\work\src\flups\src\flups\io.py", line 46, in <listcomp>
+    trace = [read_asc(fn)[:,1] for fn in fnames]
+             ^^^^^^^^^^^^
+  File "c:\work\src\flups\src\flups\io.py", line 17, in read_asc
+    return np.loadtxt((ln for ln in contents[start:].splitlines() if ln), delimiter=",")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\palatosa\miniconda3\envs\main\Lib\site-packages\numpy\lib\npyio.py", line 1318, in loadtxt
+    arr = _read(fname, dtype=dtype, comment=comment, delimiter=delimiter,
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\palatosa\miniconda3\envs\main\Lib\site-packages\numpy\lib\npyio.py", line 979, in _read
+    arr = _load_from_filelike(
+          ^^^^^^^^^^^^^^^^^^^^
+ValueError: could not convert string 'Date and Time:                Wed Jan 2 04:49:26.000 2002' to float64 at row 0, column 1.
