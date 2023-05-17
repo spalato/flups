@@ -6,15 +6,30 @@ import numpy as np
 from .calib import load_latest, calibration
 logger = logging.getLogger(__name__)
 
+
 def read_asc(fname):
     """
     Read a single `asc` file, the ASCII format from Andor Solis.
+
+    Parameters
+    ----------
+    fname : str, path-like
+        File to open.
+
     """
     logger.debug("Loading `.asc` file: %s", fname)
     with open(fname) as f:
         contents = f.read()
-    start = contents.find("\n"*3)
-    return np.loadtxt((ln for ln in contents[start:].splitlines() if ln), delimiter=",")
+    meta_start = contents.find("Date and Time")
+    logger.debug("  Metadata at %i", meta_start)
+    if meta_start == 0:
+        start = contents.find("\n"*3)
+        end = None
+    else:
+        start = None
+        end = contents.find("\n"*3)
+    return np.loadtxt((ln for ln in contents[start:end].splitlines() if ln), delimiter=",")
+
 
 def load_asc_series(fnames, calib=None, step=None):
     """
@@ -63,6 +78,7 @@ def load_asc_series(fnames, calib=None, step=None):
     assert trace.shape == (delays.size, wl.size)
     return delays, wl, trace
 
+
 def load_npz(fname):
     """
     Load data from an npz archive.
@@ -86,6 +102,7 @@ def load_npz(fname):
     trace = df["trace"]
     wl = df["wl"]
     return delays, wl, trace
+
 
 def load_txt(fname):
     """
@@ -114,6 +131,7 @@ def load_txt(fname):
     wl = cnt[0,1:]
     trace = cnt[1:,1:]
     return delays, wl, trace
+
 
 def save_txt(fname, delays, wl, trace):
     """

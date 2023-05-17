@@ -31,10 +31,13 @@ parser.add_argument("-s", "--step", help="Time step")
 # add possibility to specify wavelength calibrations
 # add way to save to npz archive
 #  add debug level
+parser.add_argument("--debug", action="store_true", help="Set logging level to debug.")
 parser.add_argument("-o", "--output", help="Output root name")
 parser.add_argument("input", help="Input pattern (`glob`).")
 
 args = parser.parse_args()
+if args.debug:
+    logging.getLogger().setLevel(logging.DEBUG)
 
 fnames = sorted(glob(args.input), key=frame_idx)
 
