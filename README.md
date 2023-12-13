@@ -1,5 +1,7 @@
 # flups
-Analysis tools for FLUPS @ EDyx
+Analysis tools for FLUPS @ EDyx. 
+
+The repository is also used to work on experimental code.
 
 ## Installation
 
@@ -24,6 +26,10 @@ If no error message is printed, the installation is successful.
 Currently, the module contains the following components:
 - `io.py`: tools to read and write data files.
 - `calib.py`: tools to handle wavelength calibrations.
+
+The reposiory also contains the following folders, which are not part of the
+python module.
+- `npe_debug`: Niko's code for acquisition in Andor Solis.
 
 ## Scripts
 - `collect_asc.py`: Collect a series of `.asc` files into a single text archive.
