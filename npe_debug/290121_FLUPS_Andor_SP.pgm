@@ -1,9 +1,11 @@
 rem ******************************************************************************************
-rem *   FLUPS 00.1																			 *
-rem *   26/04/2007																			 *
-rem *	for ANDOR Newton, with direction of delay changed                                                                                        *
-rem *  03/02/2021                                                                                                                                             *
-rem *  reorganized stage calls in a futile attempt at debugging. The problem lied in AndorSolis.                                        *
+rem *  FLUPS 00.1																			 *
+rem *  26/04/2007																			 *
+rem *	for ANDOR Newton, with direction of delay changed                                    *
+rem *  03/02/2021 FLUPS v1.0                                                                 *
+rem *   reorganized stage calls in a futile attempt at debugging. The problem lied in AndorSolis.*
+rem *  13/12/2023 FLUPS v1.1                                                                 *
+rem *   using reversed stage position (now delaying the gate)                                *
 rem ==========================================================================================
 rem The following parameters define, at any time, the status of the measurement.
 rem They are described and initialized here.
@@ -18,20 +20,21 @@ name$=""							:rem filename without prefix (m or b) or extention
 cmt$="no comment"						:rem comment
 longcmt$="Date Time ..."					:rem comment with preceeding date & time
 rem .DELAY parameters
-tzi=0								:rem timezero-indicator (needed for 1st cycle only) 
-timeperstep=2/3000						:rem time per step in ps
-actpos=150000						:rem actual position; is usually overwritten
-zeropos=150000						:rem position for which timezero is defined
-	delaytime=(actpos-zeropos)*timeperstep		:rem delaytime in ps
+tzi=0								:rem timezero-indicator (needed for 1st cycle only)
+dir=-1                              :rem stage direction: -1-> delaying gate, neg delay to large positions (away from motor).
+timeperstep=dir*2/3000				:rem time per step in ps
+actpos=150000						:rem actual position in motorsteps; is usually overwritten
+zeropos=150000						:rem position for which timezero is defined, in motorsteps
+delaytime=(actpos-zeropos)*timeperstep		:rem delaytime in ps
 stepwidth=100								:rem stepwidth in fs
-	incrementpos=stepwidth/(1000*timeperstep)		:rem increment of position during scan	
+incrementpos=stepwidth/(1000*timeperstep)	:rem increment of position during scan	
 negdelay=1.0								:rem range (>=0 !) before timezero in ps
-	negdelaypos=zeropos-negdelay/timeperstep					:rem start position for scan
+negdelaypos=zeropos-negdelay/timeperstep	:rem start position for scan
 maxdelay=1.0								:rem range     after  timezero in ps
-	maxdelaypos=zeropos+maxdelay/timeperstep		:rem end   position for scan
-	ff=(maxdelaypos-negdelaypos+1)/incrementpos		:rem number of measurements in a scan
-	gosub .fix
-	nmeas=gg+1
+maxdelaypos=zeropos+maxdelay/timeperstep		:rem end   position for scan
+ff=(maxdelaypos-negdelaypos+1)/incrementpos		:rem number of measurements in a scan
+gosub .fix
+nmeas=gg+1
 expotime=0.10								:rem exposure time in s
 rem .GOTO parameters
 gflag=0   									:rem flags that  gototime has been properly entered
@@ -56,7 +59,7 @@ cTP$="1TP"+chr$(10) :  cGL$="1GL"+chr$(10)
 cSVfast$="1SV100000"+chr$(10)
 cSVslow$="1SV20000"+chr$(10)
 rem
-targetpos=-999999						:rem move extremely far to the left until limit
+targetpos=-999999						:rem move extremely far end until limit
 print("Finding start position...")
 
 gosub .MoveAbsoluteSlow
@@ -91,7 +94,7 @@ rem
 rem ******************************************************************************************
 .main
 rem ******************************************************************************************
-rem selects the submenue
+rem selects the submenu
 rem ------------------------------------------------------------------------------------------
 mi=0
 while mi==0
@@ -216,7 +219,7 @@ rem
 rem ******************************************************************************************
 .file
 rem ******************************************************************************************
-rem Inputs filename, saves #100 and #99
+rem Inputs filename, saves spectra #100 and #99
 rem ------------------------------------------------------------------------------------------
 mit$="m"
 bit$="b"
@@ -294,7 +297,7 @@ return
 rem ******************************************************************************************
 .TellPosition
 rem ******************************************************************************************
-rem updates vTP
+rem updates vTP with current position
 rem ------------------------------------------------------------------------------------------
 if (debugstage) then print(".TellPosition start")
 stage_msg$=cTP$
@@ -448,7 +451,7 @@ delaytime=(actpos-zeropos)*timeperstep
 rem...
 gti=0
 while gti==0
-	input(" ***** Goto *****        delay ";delaytime;" ps at position ";actpos;"                           Enter desired delay (ps; or z)   ";gototime;"  ",answ$)
+	input(" ***** Goto *****        delay ";delaytime;" ps at position ";actpos;"                           Enter desired delay (ps) or z to go home ";gototime;"  ",answ$)
 	if (asc(answ$)==122) || (asc(answ$)==90) then	:rem "z" was entered to go home
 		gotopos=zeropos : gototime=0
 		targetpos=gotopos
@@ -475,7 +478,7 @@ rem			gosub .MoveAbsoluteFast
 			xx=zeropos+gototimesteps
 			
 			Print("aa",aa," ff",ff, " gg", gg, "xx", xx, str$(xx))
-			if (0 <=xx) && (xx<=2000000)  then		:rem move is accepted
+			if (0 <=xx) && (xx<=2000000)  then		:rem move is accepted :rem software limit on the positions
 				gotopos=xx		
 				gototime=gototimesteps*timeperstep	:rem correct gototime commensurate with steps
 				targetpos=xx
@@ -492,21 +495,19 @@ rem			gosub .MoveAbsoluteFast
 wend 
 return
 rem ******************************************************************************************
-.fix
+.fix 
 rem ******************************************************************************************
 rem a number on  ff is clipped & the corresponding integer placed on gg 
+rem   SP: rounds down. Handles negative numbers as needed.
+rem 3.3 -> 3
+rem 3.6 -> 3
+rem -3.3 -> -3
+rem -3.6 -> -3
 rem ------------------------------------------------------------------------------------------
-rem f$=str$(ff)
-rem a =instr(f$,".")
-rem if a then
-rem   name$=left$(f$,a-1)
-rem else
-rem name$=f$
-rem endif
-rem gg=val(name$)
 gg=ff-mod(ff,1)
 return
-rem
+
+
 rem ******************************************************************************************
 .measure
 rem ******************************************************************************************
@@ -551,7 +552,7 @@ rem #99=smooth3(#99)                        :rem perform 9 point Savitsky-Golay 
 rem -------------------------------------------- scan ----------------------------------------
 pflag=0										:rem switches off report from MoveAbsolute...
 counter=1
-targetpos=negdelaypos-incrementpos
+targetpos=negdelaypos-incrementpos			
 while (counter<=nmeas) && (delaytime <=	maxdelay)
 	targetpos=targetpos+incrementpos
 	gosub .MoveAbsoluteSlow
