@@ -137,4 +137,5 @@ dmypy.json
 # FLUPS stuff
 scratch/debug_asc/run01/
 scratch/debug_asc/run11/
+scratch/*/*.ipynb
 
