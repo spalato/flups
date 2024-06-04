@@ -3,3 +3,4 @@ matplotlib
 lmfit
 scipy
 pyyaml
+toml
