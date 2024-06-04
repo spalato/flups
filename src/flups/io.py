@@ -31,7 +31,7 @@ def read_asc(fname):
     return np.loadtxt((ln for ln in contents[start:end].splitlines() if ln), delimiter=",")
 
 
-def load_asc_series(fnames, calib=None, step=None):
+def load_asc_series(fnames, calib=None, step="first"):
     """
     Load a series of Andor Solis `asc` files. Computes the delays and wl.
 
@@ -44,9 +44,10 @@ def load_asc_series(fnames, calib=None, step=None):
         The parameters can also be passed as an array: `[b0, b1]`, where `b0` is
         the initial value assuming 0-based indexing. If `None` (default), uses
         the lastest calibration from `flups.calib`
-    step: float or None
-        The timestep, in fs. If `None` (default), the timestep will be found
-        from the filename as `_sNNN_`.
+    step: float, or str in {"first", "filename"}. Default: "first".
+        The timestep, in ps.
+        If "first" (default), the position is read from the first pixel of each spectrum.
+        If "filename", the timestep will be found from the filename as `_sNNN_`.
 
     Returns
     -------
@@ -63,10 +64,21 @@ def load_asc_series(fnames, calib=None, step=None):
     assert np.allclose([t.size for t in trace], trace[0].size) # check they all have the same length
     trace = np.array(trace)
     # compute time axis
-    step = step or float(re.search("_s(\d+)_", fnames[0]).group(1))
-    n_pix = trace.shape[1]
-    delays = np.arange(0, trace.shape[0])*step
+    if step == "first":
+        delays = trace[:,0]
+    elif step == "filename":
+        step = float(re.search("_s(\d+)_", fnames[0]).group(1))
+        delays = np.arange(0, trace.shape[0])*step
+    else:
+        try:
+            step = float(step)
+        except ValueError:
+            raise ValueError("step argument not understood. Must be a float, convertible to a float, or in "
+                             "{'first', 'filename'}.")
+        delays = np.arange(0, trace.shape[0]) * step
+
     # compute wavelength axis
+    n_pix = trace.shape[1]
     pixels = np.arange(n_pix)
     if calib is None:
         calib = load_latest()
