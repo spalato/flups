@@ -58,7 +58,7 @@ args.output = args.output or fnames[0][:-8]+".txt"
 
 logging.info("Loading files...")
 if __HAS_PBAR and not args.no_pbar:
-    fnames = tqdm(fnames)
+    fnames = tqdm(fnames, total=len(fnames))
 data = load_asc_series(fnames, step=args.step)
 
 logging.info(f"Saving to: {args.output}")

@@ -43,7 +43,7 @@ def load_asc_series(fnames, calib=None, step="first"):
         Wavelength calibration used to convert the pixels to wavelength.
         The parameters can also be passed as an array: `[b0, b1]`, where `b0` is
         the initial value assuming 0-based indexing. If `None` (default), uses
-        the lastest calibration from `flups.calib`
+        the first column of the first file.
     step: float, or str in {"first", "filename"}. Default: "first".
         The timestep, in ps.
         If "first" (default), the position is read from the first pixel of each spectrum.
@@ -59,10 +59,22 @@ def load_asc_series(fnames, calib=None, step="first"):
         Signal intensity
     """
     # read the data
-    trace = [read_asc(fn)[:,1] for fn in fnames]
+    # TODO: actually read the pixel/wl axis from the first file.
+    # skip that calibration step, Marco was not using it anyways. It's easy to replace at the end.
+    nfiles = len(fnames)
+    logger.debug(f"nfiles: {nfiles}")
+    fnames = iter(fnames)
+    first = read_asc(next(fnames))
+    wl = first[:, 0]  # we are reading the first file twice, but whatever
+    logger.debug(f"wl.size: {wl.size}")
+    trace = [first[:,1]]
+    for fn in fnames:
+        trace.append(read_asc(fn)[:, 1])
     # TODO: change to proper error.
-    assert np.allclose([t.size for t in trace], trace[0].size) # check they all have the same length
+    assert np.allclose([t.size for t in trace], trace[0].size)  # check they all have the same length
     trace = np.array(trace)
+    logger.debug(f"Trace shape: {trace.shape}")
+    assert trace.shape == (nfiles, wl.size)
     # compute time axis
     if step == "first":
         delays = trace[:,0]
@@ -76,13 +88,12 @@ def load_asc_series(fnames, calib=None, step="first"):
             raise ValueError("step argument not understood. Must be a float, convertible to a float, or in "
                              "{'first', 'filename'}.")
         delays = np.arange(0, trace.shape[0]) * step
-
     # compute wavelength axis
     n_pix = trace.shape[1]
     pixels = np.arange(n_pix)
     if calib is None:
-        calib = load_latest()
-    if isinstance(calib, calibration):
+        pass  # keep the data from the first file.
+    elif isinstance(calib, calibration):
         wl = calib.calibrate(pixels)
     else:
         b0, b1 = calib
