@@ -17,6 +17,7 @@ def read_asc(fname):
         File to open.
 
     """
+
     logger.debug("Loading `.asc` file: %s", fname)
     with open(fname) as f:
         contents = f.read()
@@ -28,6 +29,13 @@ def read_asc(fname):
     else:
         start = None
         end = contents.find("\n"*3)
+
+    # def __fixup(line): # Uncomment in case of emergency...
+    #     """huh.. The wavelength is saved using , as decimal separator, while the value uses `.`"""
+    #     if line.count(",") > 1:
+    #         line = line.replace(",", ".", 1)
+    #     return line
+    # return np.loadtxt((__fixup(ln) for ln in contents[start:end].splitlines() if ln), delimiter=",")
     return np.loadtxt((ln for ln in contents[start:end].splitlines() if ln), delimiter=",")
 
 
@@ -88,6 +96,9 @@ def load_asc_series(fnames, calib=None, step="first"):
             raise ValueError("step argument not understood. Must be a float, convertible to a float, or in "
                              "{'first', 'filename'}.")
         delays = np.arange(0, trace.shape[0]) * step
+    if delays[1]<delays[0]:
+        delays = delays[::-1]
+        trace = trace[::-1,:]
     # compute wavelength axis
     n_pix = trace.shape[1]
     pixels = np.arange(n_pix)

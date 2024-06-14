@@ -215,7 +215,7 @@ endif
 rem
 	ff=(maxdelaypos-negdelaypos+1)/incrementpos	:rem number of measurements in a scan
 	gosub .fix
-	nmeas=gg+1
+	nmeas=gg+2  :rem including endpoint
 rem
 answ=0
 input("Exposure time   (s)   ";expotime;"  ",answ)
@@ -559,7 +559,7 @@ rem -------------------------------------------- scan --------------------------
 pflag=0										:rem switches off report from MoveAbsolute...
 counter=1
 if (scandir < 0) then                       :rem scanning backwards
-    targetpos = maxdelay
+    targetpos = maxdelaypos
 else
     targetpos = negdelaypos
 endif
@@ -574,7 +574,7 @@ while (counter<=nmeas) :rem we don't need this.. && (delaytime <=	maxdelay)
 	#0[1]=delaytime							:rem place counter  onto pixel 1
 	#100{counter}=#0-#99					:rem subtract background and place item into dataset #100
 	activekineticposition(#100,counter)
-	gosub .meascursor
+	:rem gosub .meascursor
 	counter=counter+1
 wend
 	targetpos=zeropos
