@@ -87,7 +87,7 @@ def load_asc_series(fnames, calib=None, step="first"):
     if step == "first":
         delays = trace[:,0]
     elif step == "filename":
-        step = float(re.search("_s(\d+)_", fnames[0]).group(1))
+        step = float(re.search(r"_s(\d+)_", fnames[0]).group(1))
         delays = np.arange(0, trace.shape[0])*step
     else:
         try:
