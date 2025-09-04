@@ -26,6 +26,9 @@ If no error message is printed, the installation is successful.
 Currently, the module contains the following components:
 - `io.py`: tools to read and write data files.
 - `calib.py`: tools to handle wavelength calibrations.
+- `analysis.py`: data processing tools.
+- `plot_utils.py`: for quick plotting.
+
 
 The reposiory also contains the following folders, which are not part of the
 python module.
