@@ -50,6 +50,13 @@ args = parser.parse_args()
 if args.debug:
     logging.getLogger().setLevel(logging.DEBUG)
 
+# save using root directory name if not specified in PS
+if "<root>" in args.output:
+    from pathlib import Path
+    root = str(Path.cwd())
+    root = root[root.rfind("\\") + 1:]
+    args.output = root + args.output[6:]
+    
 fnames = sorted(glob(args.input), key=frame_idx)
 
 
