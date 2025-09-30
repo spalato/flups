@@ -37,5 +37,5 @@ python module.
 ## Scripts
 - `collect_asc.py`: Collect a series of `.asc` files into a single text archive.
 
-  To execute on a complete directory, using PS: 
+  To execute on a complete directory, enter the directory and use PowerShell: 
   > `ls -Directory | %{$_.Name} | %{python -m flups.collect_asc -o "<root>_$_.txt" "$_/*sig*.asc"}`
