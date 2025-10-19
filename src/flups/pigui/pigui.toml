@@ -1,5 +1,5 @@
 port = "Mock"
 axis = "0"
 scandir = -1
-time_zero = 50000
+time_zero = 5000
 autoconnect = true

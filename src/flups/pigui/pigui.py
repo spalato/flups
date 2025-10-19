@@ -153,6 +153,10 @@ class PiguiController(QObject):
         self.stage.find_max_edge()
         self.start_monitor()
 
+    def define_home(self):
+        self.stage.define_home()
+        self.update_all()
+
 
 class PIWidget(QWidget):
     def __init__(self, appdata: PiguiAppData, controller: PiguiController, **kwargs):
@@ -229,6 +233,7 @@ class PIWidget(QWidget):
         self.t0_here_btn.clicked.connect(self.on_t0_here)
         self.seek_low_btn.clicked.connect(self.controller.seek_low)
         self.seek_hi_btn.clicked.connect(self.controller.seek_hi)
+        self.home_here_btn.clicked.connect(self.controller.define_home)
 
         self.stop_btn.clicked.connect(self.controller.stop_stage)
         self.pos_edit.changeAccepted.connect(self.controller.move_to_pos)
@@ -288,7 +293,6 @@ class PIWidget(QWidget):
             else:
                 w.setEnabled(True)
 
-    # TODO: def on_edit_t0
-    # TODO: synch velocity changes to stage.
+    # TODO: on home
 
 

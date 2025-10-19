@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "FLUPS"
-version = "0.2"
+version = "0.3"
 description = "Tools for the processing and analysis of FLUPS data."
 authors = [
     { name = "S. Palato"}
@@ -20,6 +20,8 @@ dependencies = [
     "pyyaml",
     "toml",
     "pyserial",
+    "PySide6",
+    "qtlets",
 ]
 
 
