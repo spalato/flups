@@ -37,9 +37,6 @@ logger = logging.getLogger(__name__)
 # Tell Version: nVE
 
 
-# TODO: define home
-
-
 class PIStage(object):
     eol = b"\n"
     encoding = "ascii"
@@ -142,7 +139,7 @@ class PIStage(object):
         "Wait until stage is done. Returns True for normal completion, False for timeout."
         start_t = time()
         while self.is_moving():
-            if ((time()-start_t) > timeout):
+            if (time() - start_t) > timeout:
                 return False
             sleep(dt)
         return True
@@ -163,7 +160,7 @@ class PIStage(object):
 
     def set_velocity(self, value):
         """Set velocity, in microsteps"""
-        self._write(self.axis+ "SV{:d}".format(value).encode())
+        self._write(self.axis + "SV{:d}".format(value).encode())
 
     def move_to(self, value):
         """Move to absolute position, in microsteps"""
@@ -176,4 +173,9 @@ class PIStage(object):
     def find_max_edge(self):
         """Move to maximum edge."""
         self._write(self.axis + b"FE1")
+
+    def define_home(self):
+        """Define home here"""
+        self._write(self.axis + b"DH")
+
 

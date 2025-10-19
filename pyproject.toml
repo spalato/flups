@@ -18,7 +18,8 @@ dependencies = [
     "lmfit",
     "scipy",
     "pyyaml",
-    "toml"
+    "toml",
+    "pyserial",
 ]
 
 

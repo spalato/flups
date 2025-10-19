@@ -25,7 +25,7 @@ class MockPIStage(object):
             dt = time() - self._start_t
             logger.debug(f"Elapsed time: {dt:.03f}")
             dist = self._target - self._start_pos
-            moved = self.velocity*dt 
+            moved = self._velocity*dt
             #logger.debug(f"Moved {int(moved):d} of {int(abs(dist)):d}")
             if moved > abs(dist):
                 logger.debug("Move done.")
@@ -74,6 +74,7 @@ class MockPIStage(object):
         return self._velocity
 
     def set_velocity(self, value):
+        logger.debug(f"Setting velocity to {value}")
         self._velocity = value
 
     def move_to(self, value):
@@ -89,4 +90,7 @@ class MockPIStage(object):
 
     def find_min_edge(self):
         self.move_to(-200_000)
+
+    def define_home(self):
+        self._current_pos = 0
 
