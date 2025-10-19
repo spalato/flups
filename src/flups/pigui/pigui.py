@@ -293,6 +293,5 @@ class PIWidget(QWidget):
             else:
                 w.setEnabled(True)
 
-    # TODO: on home
 
 

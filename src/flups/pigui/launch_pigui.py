@@ -5,7 +5,7 @@ from PySide6 import QtWidgets
 from flups.pigui.pigui import PIWidget, PiguiAppData, PiguiController
 
 
-if __name__ == "__main__":
+def launch_pigui():
     logging.basicConfig(level=logging.DEBUG)
     cfg_file = pth.join(
         pth.dirname(__file__),
@@ -30,4 +30,8 @@ if __name__ == "__main__":
     ret = app.exec()
     logging.info(f"Saving config to: {cfg_file}")
     appdata.to_toml(cfg_file)
-    sys.exit(ret)
+    return ret
+
+
+if __name__ == "__main__":
+    sys.exit(launch_pigui())

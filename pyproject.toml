@@ -30,3 +30,6 @@ package-dir = {"" = "src"}
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[project.scripts]
+pigui = "flups.pigui.launch_pigui:launch_pigui"
