@@ -1,5 +1,5 @@
-port = "Mock"
-axis = "0"
+port = "COM7"
+axis = "1"
 scandir = -1
-time_zero = 5000
+time_zero = 1012500
 autoconnect = true

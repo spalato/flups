@@ -116,12 +116,12 @@ class PiguiController(QObject):
 
     def move_to_pos(self, value):
         logger.debug(f"Moving to pos: {value}, ({type(value)})")
-        self.stage.move_to(value)
+        self.stage.move_to(int(value))
         self.start_monitor()
 
     def move_to_delay(self, value):
         logger.debug(f"Moving to delay: {value}, ({type(value)})")
-        pos = self.appdata.delay_to_pos(value)
+        pos = int(round(self.appdata.delay_to_pos(value),0))
         self.move_to_pos(pos)
 
     def start_monitor(self):

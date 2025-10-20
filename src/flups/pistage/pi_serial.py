@@ -105,7 +105,7 @@ class PIStage(object):
         """
         self._write(msg)
         ret = self.port.readline().rstrip(self.eol)
-        logger.debug("Reply: %s". ret)
+        logger.debug("Reply: %s", ret)
         head, tail = ret.split(b":")
         assert head.lower() == msg.lower()
         return tail

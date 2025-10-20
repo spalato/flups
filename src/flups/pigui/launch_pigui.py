@@ -4,7 +4,7 @@ import logging
 from PySide6 import QtWidgets
 from flups.pigui.pigui import PIWidget, PiguiAppData, PiguiController
 
-
+# TODO: add a default "safe mode" in case of bugs at launch due to errors in pigui.toml
 def launch_pigui():
     logging.basicConfig(level=logging.DEBUG)
     cfg_file = pth.join(
