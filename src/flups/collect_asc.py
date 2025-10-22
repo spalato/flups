@@ -51,7 +51,7 @@ if args.debug:
     logging.getLogger().setLevel(logging.DEBUG)
 
 # save using root directory name if not specified in PS
-if "<root>" in args.output:
+if args.output != None and "<root>" in args.output:
     from pathlib import Path
     root = str(Path.cwd())
     root = root[root.rfind("\\") + 1:]
