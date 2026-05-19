@@ -1,3 +1,5 @@
 {
-    "python.pythonPath": "C:\\Users\\samue\\miniconda3\\envs\\main\\python.exe"
+    "python.pythonPath": "C:\\Users\\samue\\miniconda3\\envs\\main\\python.exe",
+    "python-envs.defaultEnvManager": "ms-python.python:conda",
+    "python-envs.defaultPackageManager": "ms-python.python:conda"
 }
